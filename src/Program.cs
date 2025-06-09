@@ -70,6 +70,25 @@ public class Program
             index++; // Skip 'e'
             return list;
         }
+        else if (current == 'd')
+        {
+            // Parse dictionary: d<key><value>e
+            index++; // Skip 'd'
+            var dict = new Dictionary<string, object>();
+            while (input[index] != 'e')
+            {
+                // Keys must be strings
+                var keyObj = DecodeEncodedValue(input, ref index);
+                if (keyObj is not string key)
+                {
+                    throw new InvalidOperationException("Dictionary keys must be strings");
+                }
+                var value = DecodeEncodedValue(input, ref index);
+                dict[key] = value;
+            }
+            index++; // Skip 'e'
+            return dict;
+        }
         else
         {
             throw new InvalidOperationException("Unhandled encoded value starting at: " + input[index]);
