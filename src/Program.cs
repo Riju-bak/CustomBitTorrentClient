@@ -1,42 +1,54 @@
 using System.Text.Json;
 
-// Parse arguments
-var (command, param) = args.Length switch
+public class Program
 {
-    0 => throw new InvalidOperationException("Usage: your_program.sh <command> <param>"),
-    1 => throw new InvalidOperationException("Usage: your_program.sh <command> <param>"),
-    _ => (args[0], args[1])
-};
+    public static void Main(string[] args)
+    {
+        // Parse arguments
+        string? command;
+        string? param;
+        switch (args.Length)
+        {
+            case 0:
+            case 1:
+                throw new InvalidOperationException("Usage: your_program.sh <command> <param>");
+            default:
+                (command, param) = (args[0], args[1]);
+                break;
+        }
 
-// Parse command and act accordingly
-if (command == "decode")
-{
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    Console.Error.WriteLine("Logs from your program will appear here!");
+        // Parse command and act accordingly
+        if (command == "decode")
+        {
+            // You can use print statements as follows for debugging, they'll be visible when running tests.
+            Console.Error.WriteLine("Logs from your program will appear here!");
 
-    // Uncomment this line to pass the first stage
-    //var encodedValue = param;
-    //if (Char.IsDigit(encodedValue[0]))
-    //{
-    //    // Example: "5:hello" -> "hello"
-    //    var colonIndex = encodedValue.IndexOf(':');
-    //    if (colonIndex != -1)
-    //    {
-    //        var strLength = int.Parse(encodedValue[..colonIndex]);
-    //        var strValue = encodedValue.Substring(colonIndex + 1, strLength);
-    //        Console.WriteLine(JsonSerializer.Serialize(strValue));
-    //    }
-    //    else
-    //    {
-    //        throw new InvalidOperationException("Invalid encoded value: " + encodedValue);
-    //    }
-    //}
-    //else
-    //{
-    //    throw new InvalidOperationException("Unhandled encoded value: " + encodedValue);
-    //}
+            // Uncomment this line to pass the first stage
+            var encodedValue = param;
+            if (Char.IsDigit(encodedValue[0]))
+            {
+                // Example: "5:hello" -> "hello"
+                var colonIndex = encodedValue.IndexOf(':');
+                if (colonIndex != -1)
+                {
+                    var strLength = int.Parse(encodedValue[..colonIndex]);
+                    var strValue = encodedValue.Substring(colonIndex + 1, strLength);
+                    Console.WriteLine(JsonSerializer.Serialize(strValue));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid encoded value: " + encodedValue);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Unhandled encoded value: " + encodedValue);
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException($"Invalid command: {command}");
+        }
+    }    
 }
-else
-{
-    throw new InvalidOperationException($"Invalid command: {command}");
-}
+
