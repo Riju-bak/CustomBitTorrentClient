@@ -40,6 +40,17 @@ public class Program
                     throw new InvalidOperationException("Invalid encoded value: " + encodedValue);
                 }
             }
+            else if (encodedValue[0]=='i')
+            {
+                int eIndex = encodedValue.IndexOf('e');
+                if (eIndex != -1 && eIndex == encodedValue.Length - 1)
+                {
+                    // i123e
+                    string strNum = encodedValue.Substring(1, eIndex - 1);
+                    Console.WriteLine(long.Parse(strNum));
+                }
+                else throw new InvalidOperationException($"Invalid encoded value: {encodedValue}");
+            }
             else
             {
                 throw new InvalidOperationException("Unhandled encoded value: " + encodedValue);
