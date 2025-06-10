@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 
 public class Program
@@ -17,6 +18,8 @@ public class Program
                 break;
         }
 
+        Console.Error.WriteLine($"DEBUG param: {param}");
+
         // Parse command and act accordingly
         if (command == "decode")
         {
@@ -27,6 +30,25 @@ public class Program
             int index = 0;
             var decoded = DecodeEncodedValue(encodedValue, ref index);
             Console.WriteLine(JsonSerializer.Serialize(decoded));
+        }
+        else if (command == "info")
+        {
+            var torrentFile = param;
+            string bencodedTorrent = Encoding.ASCII.GetString(File.ReadAllBytes(torrentFile));
+            Console.Error.WriteLine($"DEBUG bencodedTorrent: {bencodedTorrent}");
+
+            int index = 0;
+            var decoded = DecodeEncodedValue(bencodedTorrent, ref index);
+            string decodedStr = JsonSerializer.Serialize(decoded);
+
+            using JsonDocument doc = JsonDocument.Parse(decodedStr);
+            JsonElement root = doc.RootElement;
+
+            string announce = root.GetProperty("announce").GetString()!;
+            int infoLength = root.GetProperty("info").GetProperty("length").GetInt32();
+            
+            Console.WriteLine($"Tracker URL: {announce}");
+            Console.WriteLine($"Length: {infoLength}");
         }
         else
         {
