@@ -30,6 +30,8 @@ public class Program
                 Console.WriteLine($"Tracker URL: {torrent.Announce}");
                 Console.WriteLine($"Length: {torrent.Info.Length}");
                 Console.WriteLine($"Info Hash: {torrent.Info.HexStringHash}");
+                Console.WriteLine($"Piece Length: {torrent.Info.PieceLength}");
+                Console.WriteLine($"Piece Hashes: {torrent.Info.HexStringPieceHash}");
             }
         }
         

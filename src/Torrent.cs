@@ -47,7 +47,7 @@ public class Info
 {
     public int Length { get; set; }
     public string Name { get; set; } = null!;
-    public int PieceLength { get; set; }
+    public int PieceLength { get; set; }            //number of bytes in each piece, an integer
     public byte[][] PieceHashes { get; set; } = null!;
 
     public byte[] Hash { get; set; } = null!;
@@ -57,6 +57,15 @@ public class Info
         get
         {
             return String.Join("", Hash.Select(x => x.ToString("x2")));
+        }
+    }
+
+    public string HexStringPieceHash
+    {
+        get
+        {
+            //Here SelectMany flattens the byte[][] into IEnumerable<string> 
+            return String.Concat(PieceHashes.SelectMany(pieceHash => pieceHash.Select(x => x.ToString("x2"))));
         }
     }
 
