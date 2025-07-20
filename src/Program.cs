@@ -1,10 +1,12 @@
+using System.Net;
 using System.Text;
 using System.Text.Json;
-using CodeCrafters.Bittorrent;
+
+namespace CodeCrafters.Bittorrent;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         // Parse arguments
         string? command;
@@ -27,12 +29,14 @@ public class Program
             //A torrent file has been passed as a param
             if(command == "info")
             {
-                Console.WriteLine($"Tracker URL: {torrent.Announce}");
+                Console.WriteLine($"Tracker URL: {torrent.Tracker.Address}");
                 Console.WriteLine($"Length: {torrent.Info.Length}");
-                Console.WriteLine($"Info Hash: {torrent.Info.HexStringHash}");
+                Console.WriteLine($"Info Hash: {torrent.Info.HexStringInfoHash}");
                 Console.WriteLine($"Piece Length: {torrent.Info.PieceLength}");
                 Console.WriteLine($"Piece Hashes: {torrent.Info.HexStringPieceHash}");
             }
+            else if (command == "peers")
+                await torrent.DiscoverPeers();
         }
         
         else if (command == "decode")
@@ -49,5 +53,5 @@ public class Program
             throw new InvalidOperationException($"Invalid command: {command}");
         }
     }
-}
 
+}
