@@ -43,50 +43,6 @@ public class Torrent
         return torrent;
     }
     
-    public async Task DiscoverPeers()
-    {
-        //This is a temp bullshit method. It's just to see if I can pass the discover peers stage
-        using (HttpClient client = new())
-        {
-            string trackerUrl = this.Tracker.Address;
-
-            var requestUri = $"{trackerUrl}?" +
-                             $"info_hash={this.Info.UrlSafeInfoHash}" +
-                             $"&peer_id=00000000000000000000" +
-                             $"&port=6881" +
-                             "&uploaded=0" +
-                             "&downloaded=0" +
-                             $"&left={this.Info.Length}"+
-                             "&compact=1";
-            HttpResponseMessage response = await client.GetAsync(requestUri);
-            Console.Error.WriteLine($"request uri to tracker: {requestUri}");
-            if (!response.IsSuccessStatusCode)
-            {
-                Console.Error.WriteLine($"Unable to reach tracker: {trackerUrl}");
-                return;
-            }
-            
-            byte[] data = await response.Content.ReadAsByteArrayAsync();
-            Dictionary<string, object>? info = Bencoding.Decode(data) as Dictionary<string, object>;
-            
-            if (!(info?["peers"] is byte[] peerInfo))
-            {
-                Console.Error.WriteLine("Invalid peer info is not correct.");
-                return;
-            }
-            
-            List<IPEndPoint> peerIps = new();
-            for (int offset = 0; offset < peerInfo.Length; offset += 6)
-            {
-                IPAddress ipAddress = new IPAddress([ peerInfo[offset], peerInfo[offset+1], peerInfo[offset+2], peerInfo[offset+3]]);
-                int port = (peerInfo[offset + 4] << 8) + peerInfo[offset + 5]; //Big endian to int
-                peerIps.Add(new IPEndPoint(ipAddress, port));
-            }
-            
-            foreach(IPEndPoint peerIp in peerIps)
-                Console.WriteLine(peerIp);
-        }
-    }
 
 }
 

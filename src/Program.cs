@@ -11,11 +11,16 @@ public class Program
         // Parse arguments
         string? command;
         string? param;
+        string peerIpInfo = null!;
         switch (args.Length)
         {
             case 0:
             case 1:
                 throw new InvalidOperationException("Usage: your_program.sh <command> <param>");
+            case 3:
+                //To handle tests - ./your_program.sh handshake sample.torrent <peer_ip>:<peer_port>
+                (command, param, peerIpInfo) = (args[0], args[1], args[2]);
+                break;
             default:
                 (command, param) = (args[0], args[1]);
                 break;
@@ -23,20 +28,30 @@ public class Program
 
         if (param.Contains(".torrent"))
         {
-            string torrentFile = param;
-            Torrent torrent = Torrent.LoadFromFile(torrentFile);
+            Client client = new Client(Torrent.LoadFromFile(param));
             
             //A torrent file has been passed as a param
             if(command == "info")
             {
-                Console.WriteLine($"Tracker URL: {torrent.Tracker.Address}");
-                Console.WriteLine($"Length: {torrent.Info.Length}");
-                Console.WriteLine($"Info Hash: {torrent.Info.HexStringInfoHash}");
-                Console.WriteLine($"Piece Length: {torrent.Info.PieceLength}");
-                Console.WriteLine($"Piece Hashes: {torrent.Info.HexStringPieceHash}");
+                Console.WriteLine($"Tracker URL: {client.Torrent.Tracker.Address}");
+                Console.WriteLine($"Length: {client.Torrent.Info.Length}");
+                Console.WriteLine($"Info Hash: {client.Torrent.Info.HexStringInfoHash}");
+                Console.WriteLine($"Piece Length: {client.Torrent.Info.PieceLength}");
+                Console.WriteLine($"Piece Hashes: {client.Torrent.Info.HexStringPieceHash}");
             }
             else if (command == "peers")
-                await torrent.DiscoverPeers();
+                await client.DiscoverPeers();
+            else if (command == "handshake")
+            {
+                //To handle tests - ./your_program.sh handshake sample.torrent <peer_ip>:<peer_port>
+                string peerIp, peerPort;
+                string[] peerIpInfoSplit = peerIpInfo!.Split(':');
+                (peerIp, peerPort) = (peerIpInfoSplit[0], peerIpInfoSplit[1]);
+                
+                Peer peer = new Peer( peerIp,  peerPort);
+                string peerId = await client.SendHandShake(peer);
+                Console.WriteLine($"Peer ID: {peerId}");
+            }
         }
         
         else if (command == "decode")
