@@ -49,8 +49,7 @@ public class Program
                 (peerIp, peerPort) = (peerIpInfoSplit[0], peerIpInfoSplit[1]);
                 
                 Peer peer = new Peer( peerIp,  peerPort);
-                string peerId = await client.SendHandShake(peer);
-                Console.WriteLine($"Peer ID: {peerId}");
+                await client.HandleHandshake(peer);
             }
         }
         
@@ -62,6 +61,16 @@ public class Program
             
             object decoded = Bencoding.Decode(encodedValueBytes);
             Console.WriteLine(JsonSerializer.Serialize(decoded, options));
+        }
+        else if (command == "download_piece")
+        {
+            //Handle tests ./your_program.sh download_piece -o /tmp/test-piece sample.torrent <piece_index>
+            string pieceOutputPath, torrentFileName, pieceIndex;
+            (pieceOutputPath, torrentFileName, pieceIndex) = (args[3], args[4], args[5]);
+            
+            Client client = new Client(Torrent.LoadFromFile(param));
+
+            await client.DownloadPiece(pieceOutputPath, pieceIndex);
         }
         else
         {
