@@ -1,0 +1,1 @@
+Impacted tracker URL:  http://bittorrent-test-tracker.codecrafters.io/announce?info_hash=%C7%78%29%D2%A7%7D%65%16%F8%8C%D7%A3%DE%1A%26%AB%CB%FA%B0%DB&peer_id=00000000000000000000&port=6881&uploaded=0&downloaded=0&left=2994120&compact=1

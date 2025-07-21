@@ -69,6 +69,13 @@ public class Program
             (pieceOutputPath, torrentFileName, pieceIndex) = (args[2], args[3], args[4]);
             
             Client client = new Client(Torrent.LoadFromFile(torrentFileName));
+            
+            Console.Error.WriteLine($"Tracker URL: {client.Torrent.Tracker.Address}");
+            Console.Error.WriteLine($"Length: {client.Torrent.Info.Length}");
+            Console.Error.WriteLine($"Info Hash: {client.Torrent.Info.HexStringInfoHash}");
+            Console.Error.WriteLine($"Piece Length: {client.Torrent.Info.PieceLength}");
+            Console.Error.WriteLine($"Piece Hashes: {client.Torrent.Info.HexStringPieceHash}");
+
 
             await client.DownloadPiece(pieceOutputPath, pieceIndex);
         }

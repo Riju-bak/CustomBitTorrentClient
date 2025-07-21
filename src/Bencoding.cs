@@ -72,7 +72,7 @@ public static class Bencoding
         //TODO: Figure out what happens if this verification is skipped
         //verify incoming dictionary is sorted correctly,
         //else we won't be able to create identical encoding otherwise
-        // var sortedKeys = keys.OrderBy(x => BitConverter.ToString(Encoding.UTF8.GetBytes(x)));
+        var sortedKeys = keys.OrderBy(x => BitConverter.ToString(Encoding.UTF8.GetBytes(x)));
         // if (!keys.SequenceEqual(sortedKeys))
         //     throw new Exception("error loading dictionary: keys not sorted");
         

@@ -139,7 +139,11 @@ public class Client
         await TcpClient.ConnectAsync(new IPEndPoint(peer.Ip, peer.Port));
     }
 
-    public void Disconnect() => TcpClient.Close();
+    public void Disconnect()
+    {
+        Console.Error.WriteLine("Closing the connection to peer ...");
+        TcpClient.Close();
+    }
     
     public async Task SavePieceToDisk(byte[] pieceData, string outputPath)
     {
@@ -194,18 +198,19 @@ public class Client
         await SendInterestedMessage();
 
         await WaitForUnchokeMessage();
-
+        
         await SendRequestForAllBlocksInPiece(pieceIndex);
 
         Dictionary<int, byte[]>blocks = await WaitForEachPieceMessage();
         
-        //Put the blocks together
+        
+        // //Put the blocks together
         byte[] fullPiece = new byte[Torrent.Info.PieceLength];
         foreach (var kvp in blocks.OrderBy(kvp => kvp.Key))
         {
             Array.Copy(kvp.Value, 0, fullPiece, kvp.Key, kvp.Value.Length);
         }
-
+        
         return fullPiece;
     }
 
@@ -291,12 +296,18 @@ public class Client
 
         int blockSize = 16 * 1024; //Each block is 16KB
         int pieceLength = this.Torrent.Info.PieceLength;
+        
+        Console.Error.WriteLine($"Sending req for all blocks piecelength: {Torrent.Info.PieceLength}");
+        Console.Error.WriteLine($"Sending req for all blocks infohash: {Torrent.Info.HexStringInfoHash}");
+        
         int numBlocks = (int)Math.Ceiling((double)pieceLength / blockSize);
 
         for (int blockIndex = 0; blockIndex < numBlocks; blockIndex++)
         {
             int begin = blockIndex * blockSize;
             int length = Math.Min(blockSize, pieceLength - begin);
+
+            Console.Error.WriteLine($"Req block {blockIndex} len: {length}");
 
             byte[]
                 request = new byte[17]; // 4(msg_len) + 1(msg_id) + 4(piece index) + 4(byte offset in piece) + 4(length of block) = 17B total
@@ -335,6 +346,7 @@ public class Client
 
         while (blocks.Count < numBlocks)
         {
+            Console.Error.WriteLine($"Downloading block {blocks.Count}");
             // Read length prefix
             byte[] lengthPrefix = new byte[4];
             await stream.ReadExactlyAsync(lengthPrefix, 0, 4);
