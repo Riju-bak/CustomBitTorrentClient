@@ -349,12 +349,12 @@ public class Client
             Console.Error.WriteLine($"Downloading block {blocks.Count}");
             // Read length prefix
             byte[] lengthPrefix = new byte[4];
-            await stream.ReadAsync(lengthPrefix, 0, 4);
+            await stream.ReadExactlyAsync(lengthPrefix, 0, 4);
             int messageLength = BitConverter.ToInt32(lengthPrefix.Reverse().ToArray(), 0);
 
             // Read rest of the message
             byte[] message = new byte[messageLength];
-            await stream.ReadAsync(message, 0, messageLength);
+            await stream.ReadExactlyAsync(message, 0, messageLength);
 
             byte messageId = message[0];
 
