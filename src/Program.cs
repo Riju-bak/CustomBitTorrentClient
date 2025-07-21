@@ -66,9 +66,9 @@ public class Program
         {
             //Handle tests ./your_program.sh download_piece -o /tmp/test-piece sample.torrent <piece_index>
             string pieceOutputPath, torrentFileName, pieceIndex;
-            (pieceOutputPath, torrentFileName, pieceIndex) = (args[3], args[4], args[5]);
+            (pieceOutputPath, torrentFileName, pieceIndex) = (args[2], args[3], args[4]);
             
-            Client client = new Client(Torrent.LoadFromFile(param));
+            Client client = new Client(Torrent.LoadFromFile(torrentFileName));
 
             await client.DownloadPiece(pieceOutputPath, pieceIndex);
         }

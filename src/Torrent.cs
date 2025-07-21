@@ -21,7 +21,7 @@ public class Torrent
     {
         Dictionary<string, object> obj = (Dictionary<string, object>)bencodingObj;
         
-        Console.Error.WriteLine($"obj: {obj["announce"]}");
+        // Console.Error.WriteLine($"obj: {obj["announce"]}");
 
         if (!obj.ContainsKey("announce"))
             throw new Exception("Missing announce section");
